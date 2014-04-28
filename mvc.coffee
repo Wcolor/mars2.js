@@ -38,16 +38,20 @@
          current_action = @routes['default']
 
 
-       require ['controllers/'+current_action],(action_method)->
-         action_method.init()
-
-
-
-
+       if typeof current_action is 'string'
+         require ['controllers/'+current_action],(action_method)->
+           action_method.init()
+       else if typeof current_action is 'function'
+         try
+           current_action()
+         catch error
+           throw 'error,执行路由函数:'+error
+           
    #server层 
    #@extend Base
    class Service extends Base
      @include observer
+     @extend observer
      @extend singleton
      #检查回执数据是否正常
      #@param data[Object] 接口返回数据处理
